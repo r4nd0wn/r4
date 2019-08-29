@@ -1,5 +1,5 @@
 # r4
 
-![Alt text](/r4.svg?raw=true "Optional Title")
+!(/r4.svg)
 
 An easy to to use stats monitor for League of Legends
