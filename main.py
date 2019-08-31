@@ -16,6 +16,9 @@ html_upper = """
   <meta name="author" content="r4nd0wn">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="refresh" content="5">
+  <link rel = "stylesheet"
+   type = "text/css"
+   href = "style.css" />
 </head>
 
 <body>
