@@ -1,6 +1,8 @@
-from riotwatcher import RiotWatcher
+from riotwatcher import RiotWatcher, ApiError
 import time
 import json
+
+print()
 
 # ***HTML Skeleton***#
 html_upper = """
@@ -13,38 +15,33 @@ html_upper = """
   <meta name="author" content="r4nd0wn">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="refresh" content="5">
-  <link rel = "stylesheet"
-   type = "text/css"
-   href = "style.css" />
 </head>
 
 <body>
 """
-timeless = round(time.time() * 1000) - 43200000 * 2
 gids = []
 apikey = 'RGAPI-ebe77482-0b14-4670-9885-145c954b3a6e'
 fetchnigga = RiotWatcher(apikey)
 currentregion = 'euw1'
-
+matches = []
 
 def apihandler():
     with open('champion.json') as champion_file:
         champions = json.load(champion_file)
 
     # ***GET THE MATCH ID***#
-
-    me = fetchnigga.summoner.by_name(currentregion, 'R 4 N D 0 W N')
-
+    
     matchlist = fetchnigga.match.matchlist_by_account(currentregion, "esyeZI7W2HbdAlIRf9lPvZ9h3pIdM1-BawqWI3TIUGleKDM")
-
     onlymatches = matchlist['matches']
+    print(onlymatches)
     for x in onlymatches:
-        if x['timestamp'] > timeless:
+        if x['queue'] == 420:
             gids.append(x['gameId'])
-    print('I found the following matches which are completed within the last 12 hours:')
+            
+    print('you played ' + str(len(gids)) + ' rank games in the last 100 matches. I will extract the last 3 from all your rank games (sorted by timestamp):')
+    del gids[3:]
     print(gids)
-
-    matches = []
+    
     for y in gids:
         ueber = fetchnigga.match.by_id(currentregion, y)
         # print(type(ueber['participantIdentities']))
@@ -103,17 +100,13 @@ def apihandler():
         print(
             "Du hast auf der " + lane + " lane mit " + championname_current + " gegen " + championname_enemy + " gespielt")
         print("Ihr habt " + rresult)
-    rresult = "empty"
     f = open('index.html', 'w')
     f.write(html_upper)
-    championname_current = "lappen"
-    championname_enemy = "lulu"
-
     f.write("<p>mit " + championname_current + " gegen " + championname_enemy + " " + rresult + "</p>")
-
     f.write("</body></html>")
-
-
+    
 while True:
     apihandler()
-    time.sleep(100)
+    gids.clear()
+    print(gids)
+    time.sleep(60)
