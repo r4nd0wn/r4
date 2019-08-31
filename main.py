@@ -1,9 +1,6 @@
-from riotwatcher import RiotWatcher, ApiError
-from tkinter import *
+from riotwatcher import RiotWatcher
 import time
 import json
-
-print()
 
 # ***HTML Skeleton***#
 html_upper = """
@@ -117,26 +114,6 @@ def apihandler():
     f.write("</body></html>")
 
 
-def clicked():
-    while True:
-        apihandler()
-        time.sleep(100)
-
-
-mainwd = Tk()
-mainwd.title("KAXs Overlay")
-mainwd.geometry('500x250')
-
-apikeystr = StringVar(mainwd, value='RGAPI-2dd32034-434d-4f0b-bc15-ad61ab9e9911')
-desc1lbl = Label(mainwd, text="Mein API KEY:", font=("Arial", 12))
-desc1lbl.grid(column=0, row=0)
-apibtn = Button(mainwd, text="update")
-apibtn.grid(column=1, row=2)
-apiinput = Entry(mainwd, width=43, textvariable=apikeystr)
-apiinput.grid(column=0, row=2)
-apiinput.pack
-
-startapihdl = Button(mainwd, text="Start", font=("Arial", 12), width=43, command=clicked)
-
-startapihdl.grid(column=0, row=3)
-mainwd.mainloop()
+while True:
+    apihandler()
+    time.sleep(100)
