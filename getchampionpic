@@ -1,0 +1,9 @@
+#!/bin/bash
+
+cd ressources/pictures/champions && rm -rf *
+
+for (( c=1; c<=556; c++ ))
+do  
+   wget "https://cdn.leagueofgraphs.com/img/champion-icons/9.17/64/${c}.png"
+done
+read x

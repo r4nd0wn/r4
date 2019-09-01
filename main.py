@@ -20,28 +20,30 @@ html_upper = """
 <body>
 """
 gids = []
-apikey = 'RGAPI-ebe77482-0b14-4670-9885-145c954b3a6e'
+apikey = 'RGAPI-c12a1aa0-396b-43fd-aad9-cb35e6fc8267'
 fetchnigga = RiotWatcher(apikey)
 currentregion = 'euw1'
 matches = []
+
 
 def apihandler():
     with open('champion.json') as champion_file:
         champions = json.load(champion_file)
 
     # ***GET THE MATCH ID***#
-    
+
     matchlist = fetchnigga.match.matchlist_by_account(currentregion, "esyeZI7W2HbdAlIRf9lPvZ9h3pIdM1-BawqWI3TIUGleKDM")
     onlymatches = matchlist['matches']
     print(onlymatches)
     for x in onlymatches:
         if x['queue'] == 420:
             gids.append(x['gameId'])
-            
-    print('you played ' + str(len(gids)) + ' rank games in the last 100 matches. I will extract the last 3 from all your rank games (sorted by timestamp):')
+
+    print('you played ' + str(len(
+        gids)) + ' rank games in the last 100 matches. I will extract the last 3 from all your rank games (sorted by timestamp):')
     del gids[3:]
     print(gids)
-    
+
     for y in gids:
         ueber = fetchnigga.match.by_id(currentregion, y)
         # print(type(ueber['participantIdentities']))
@@ -66,7 +68,7 @@ def apihandler():
                 try:
                     championname_current = champions[str(championId_played)]
                 except:
-                    print("Der Champion mit der ID " + str(championId) + " ist leider nicht mehr verfügbar")
+                    print("Der Champion mit der ID " + str(a['championId']) + " ist leider nicht mehr verfügbar")
 
                 stats = a['stats']
                 for b in stats:
@@ -104,7 +106,8 @@ def apihandler():
     f.write(html_upper)
     f.write("<p>mit " + championname_current + " gegen " + championname_enemy + " " + rresult + "</p>")
     f.write("</body></html>")
-    
+
+
 while True:
     apihandler()
     gids.clear()
