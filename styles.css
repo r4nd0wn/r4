@@ -1,7 +1,13 @@
 @font-face {
-  font-family: friz-quadrata;
-  src: url(friz-quadrata.ttf);
+	font-family: friz-quadrata;
+	src: url('ressources/friz-quadrata.otf');
 }
 body{
-  font-family: friz-quadrata;
+	font-family: friz-quadrata;
+}
+p{
+	line-height: 0.5;
+}
+.intended{
+	text-indent: 30px;
 }

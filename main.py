@@ -2,8 +2,6 @@ from riotwatcher import RiotWatcher, ApiError
 import time
 import json
 
-print()
-
 # ***HTML Skeleton***#
 html_upper = """
 <!DOCTYPE html>
@@ -20,11 +18,19 @@ html_upper = """
 <body>
 """
 gids = []
-apikey = 'RGAPI-c12a1aa0-396b-43fd-aad9-cb35e6fc8267'
+apikey = 'RGAPI-04bbdc31-af35-4cb8-8051-0dece5a40b6d'
 fetchnigga = RiotWatcher(apikey)
 currentregion = 'euw1'
 matches = []
+ownchampion = []
+enemychampions = []
+alllanes = []
 
+
+class checker:
+    def __init__(self, apikey, accountid):
+        self.apikey = apikey
+        self.accountid = accountid
 
 def apihandler():
     with open('champion.json') as champion_file:
@@ -34,7 +40,7 @@ def apihandler():
 
     matchlist = fetchnigga.match.matchlist_by_account(currentregion, "esyeZI7W2HbdAlIRf9lPvZ9h3pIdM1-BawqWI3TIUGleKDM")
     onlymatches = matchlist['matches']
-    print(onlymatches)
+
     for x in onlymatches:
         if x['queue'] == 420:
             gids.append(x['gameId'])
@@ -45,6 +51,7 @@ def apihandler():
     print(gids)
 
     for y in gids:
+        print(y)
         ueber = fetchnigga.match.by_id(currentregion, y)
         # print(type(ueber['participantIdentities']))
         pl = ueber['participantIdentities']
@@ -68,7 +75,7 @@ def apihandler():
                 try:
                     championname_current = champions[str(championId_played)]
                 except:
-                    print("Der Champion mit der ID " + str(a['championId']) + " ist leider nicht mehr verfügbar")
+                    print("Der Champion mit der ID " + str(championId_played) + " ist leider nicht mehr verfügbar")
 
                 stats = a['stats']
                 for b in stats:
@@ -102,9 +109,12 @@ def apihandler():
         print(
             "Du hast auf der " + lane + " lane mit " + championname_current + " gegen " + championname_enemy + " gespielt")
         print("Ihr habt " + rresult)
+
     f = open('index.html', 'w')
     f.write(html_upper)
-    f.write("<p>mit " + championname_current + " gegen " + championname_enemy + " " + rresult + "</p>")
+    f.write("<p>" + championname_current + " vs " + championname_enemy + "</p>")
+    f.write("""<p class="intended">""" + rresult + "</p>")
+
     f.write("</body></html>")
 
 
