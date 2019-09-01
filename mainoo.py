@@ -94,9 +94,9 @@ class User:
 					if c == "lane":
 						lane = time[c]
 		if result == True:
-				rresult = "win"
+				rresult = """<div style="color:blue">Win</div>"""
 		elif result == False:
-			rresult = "lose"
+			rresult = """<div style="color:red">Defeat</div>"""
 		if self.rich == True:
 			return rresult, lane, championId_own, championname_own, kills, deaths, assists, cs
 		if self.rich == False:
@@ -145,15 +145,18 @@ while True:
 	
 	f = open('index.html', 'w')
 	f.write(html_upper)
-	f.write("<p>" + """<img src="./ressources/pictures/champions/""" + str(championId_own) + """.png" style="width:12px;height:12px;">""" + championname_own + " vs " + championname_enemy + "</p>")
-	f.write("""<p class="intended">""" + rresult + " " + str(kills) + "/" + str(deaths) + "/" + str(assists) + "   " + str(cs) + "</p>")
+	f.write("""<table align="center"; style="width:100%">""")
+	f.write("<tr>" + "<td>" + """<img src="./ressources/pictures/champions/""" + str(championId_own) + """.png" style="width:16px;height:16px;">""" +  " vs " + """<img src="./ressources/pictures/champions/""" + str(championID_enemy) + """.png" style="width:16px;height:16px;">""" + "</td>" + "</tr>")
+	f.write("<tr>" + "<td>" + rresult + "   KDA:" + str(kills) + "/" + str(deaths) + "/" + str(assists) + "   " + "  CS:" + str(cs) + "</td>" + "</tr>")
 
-	f.write("<p>" + championname_own1 + " vs " + championname_enemy1 + "</p>")
-	f.write("""<p class="intended">""" + rresult1 + "</p>")
+	f.write("<tr>" + "<td>" + """<img src="./ressources/pictures/champions/""" + str(championId_own1) + """.png" style="width:16px;height:16px;">""" + " vs " + """<img src="./ressources/pictures/champions/""" + str(championID_enemy1) + """.png" style="width:16px;height:16px;">""" + "</td>" +  "</tr>")
+	f.write("<tr>" + "<td>" + rresult1 + "</td>" + "</tr>")
 
-	f.write("<p>" + championname_own2 + " vs " + championname_enemy2 + "</p>")
-	f.write("""<p class="intended">""" + rresult2 + "</p>")
+	f.write("<tr>" + "<td>" + """<img src="./ressources/pictures/champions/""" + str(championId_own2) + """.png" style="width:16px;height:16px;">"""  + " vs " + """<img src="./ressources/pictures/champions/""" + str(championID_enemy2) + """.png" style="width:16px;height:16px;">""" + "</td>" + "</tr>")
+	f.write("<tr>" + "<td>" + rresult2 + "</td>" + "</tr>")
+
+	f.write("</table>")
 
 	f.write("</body></html>")
 
-	time.sleep(2)
+	time.sleep(6)

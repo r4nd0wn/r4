@@ -4,10 +4,19 @@
 }
 body{
 	font-family: friz-quadrata;
+	color:white;
 }
+
 p{
 	line-height: 0.5;
 }
+
+
+
 .intended{
 	text-indent: 30px;
+}
+
+td{
+	text-align: center;
 }
