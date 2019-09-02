@@ -54,7 +54,7 @@ class Fenster(QWidget):
 		self.setFixedSize(530, 150)
 
 		self.setWindowTitle("r4 - created by r4nd0wn.")
-		self.setWindowIcon(QIcon("r4.svg"))
+		self.setWindowIcon(QIcon("ressources/pictures/r4.svg"))
 
 		self.apibutton = QPushButton('Set API Key', self)
 		self.apibutton.setGeometry(400, 20, 110, 23)
