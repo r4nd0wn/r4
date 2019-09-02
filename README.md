@@ -2,7 +2,7 @@
 ![picture alt](https://github.com/r4nd0wn/r4/blob/master/ressources/pictures/Gui.PNG?raw=true)
 ==================
 
-An easy to to use stats monitor for League of Legends
+An easy to to use stats monitor for League of Legends streaming
 
 
 ## Dependencies ##
