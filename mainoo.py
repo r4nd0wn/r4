@@ -1,6 +1,14 @@
-from riotwatcher import RiotWatcher, ApiError
+import sys
 import time
 import json
+from riotwatcher import RiotWatcher, ApiError
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+import threading
+import logging
+
+
 
 # ***HTML Skeleton***#
 html_upper = """
@@ -21,16 +29,68 @@ html_upper = """
 <body>
 """
 gids = []
-apikey = 'RGAPI-58a57de5-9f35-4563-807d-b9f9628ffa38'
-accountid = 'esyeZI7W2HbdAlIRf9lPvZ9h3pIdM1-BawqWI3TIUGleKDM'
+apikey = 'thisisnotavalidapikey'
+accountid = 'thisisnotavalidapikey'
 region = 'euw1'
-fetchnigga = RiotWatcher(apikey)
 matches = []
 ownchampion = []
 enemychampions = []
 alllanes = []
+
+
 with open('champion.json') as champion_file:
 	champions = json.load(champion_file)
+
+
+class Fenster(QWidget):
+	def __init__(self):
+		super().__init__()
+		self.initMe()
+
+	def initMe(self):
+
+
+		self.setGeometry(0,30,530,150)
+		self.setFixedSize(530, 150)
+
+		self.setWindowTitle("r4 - created by r4nd0wn.")
+		self.setWindowIcon(QIcon("r4.svg"))
+
+		self.apibutton = QPushButton('Set API Key', self)
+		self.apibutton.setGeometry(400, 20, 110, 23)
+		self.apibutton.clicked.connect(self.apichanged)
+
+		self.accountbutton = QPushButton('Set AccountID', self)
+		self.accountbutton.setGeometry(400, 60, 110, 23)
+		self.accountbutton.clicked.connect(self.accchanged)
+
+		self.startbutton = QPushButton("Start the API Script", self)
+		self.startbutton.setGeometry(20, 110, 230, 23)
+		self.startbutton.clicked.connect(startthread)
+
+		self.stopbutton = QPushButton("Stop the API Script", self)
+		self.stopbutton.setGeometry(280, 110, 230, 23)
+		self.stopbutton.clicked.connect(stopthread)
+
+		self.apiinsert = QLineEdit("Insert API Key here", self)
+		self.apiinsert.setGeometry(20, 20, 340, 23)
+
+		self.accinsert = QLineEdit('Insert AccountID here', self)
+		self.accinsert.setGeometry(20, 60, 340, 23)
+
+		self.show()
+
+	def apichanged(self):
+		global apikey
+		print(apikey)
+		apikey = self.apiinsert.text()
+		print(apikey)
+
+	def accchanged(self):
+		global accountid
+		print(accountid)
+		accountid = self.accinsert.text()
+		print(accountid)
 
 class User:
 	def __init__(self, accountid, watcher, region):
@@ -122,41 +182,67 @@ class User:
 						try:
 							championname_enemy = champions[str(championId_enemy)]
 						except:
-							print(
-								"Der Champion mit der ID " + str(championId_enemy) + " ist leider nicht mehr verfügbar")
+							print("Der Champion mit der ID " + str(championId_enemy) + " ist leider nicht mehr verfügbar")
 		return championId_enemy, championname_enemy
 
+def allinone():
+	try:
+		global apikey
+		fetchnigga = RiotWatcher(apikey)
+		abfrage1 = User(accountid, fetchnigga, region)
+		while True:
+			matchids = abfrage1.get_matchids()
+			del matchids[3:]
+			rresult, lane, championId_own, championname_own, kills, deaths, assists, cs = abfrage1.get_user_info(matchids[0], True)
+			championID_enemy, championname_enemy = abfrage1.get_enemyinfo(matchids[0], lane)
+
+			rresult1, championId_own1, championname_own1 = abfrage1.get_user_info(matchids[1], False)
+			championID_enemy1, championname_enemy1 = abfrage1.get_enemyinfo(matchids[1], lane)
+
+			rresult2, championId_own2, championname_own2 = abfrage1.get_user_info(matchids[2], False)
+			championID_enemy2, championname_enemy2 = abfrage1.get_enemyinfo(matchids[2], lane)
+			
+			f = open('index.html', 'w')
+			f.write(html_upper)
+			f.write("""<table align="center"; style="width:100%">""")
+			f.write("<tr>" + "<td>" + """<img src="./ressources/pictures/champions/""" + str(championId_own) + """.png" style="width:16px;height:16px;">""" +  " vs " + """<img src="./ressources/pictures/champions/""" + str(championID_enemy) + """.png" style="width:16px;height:16px;">""" + "</td>" + "</tr>")
+			f.write("<tr>" + "<td>" + rresult + "   KDA:" + str(kills) + "/" + str(deaths) + "/" + str(assists) + "   " + "  CS:" + str(cs) + "</td>" + "</tr>")
+
+			f.write("<tr>" + "<td>" + """<img src="./ressources/pictures/champions/""" + str(championId_own1) + """.png" style="width:16px;height:16px;">""" + " vs " + """<img src="./ressources/pictures/champions/""" + str(championID_enemy1) + """.png" style="width:16px;height:16px;">""" + "</td>" +  "</tr>")
+			f.write("<tr>" + "<td>" + rresult1 + "</td>" + "</tr>")
+
+			f.write("<tr>" + "<td>" + """<img src="./ressources/pictures/champions/""" + str(championId_own2) + """.png" style="width:16px;height:16px;">"""  + " vs " + """<img src="./ressources/pictures/champions/""" + str(championID_enemy2) + """.png" style="width:16px;height:16px;">""" + "</td>" + "</tr>")
+			f.write("<tr>" + "<td>" + rresult2 + "</td>" + "</tr>")
+
+			f.write("</table>")
+
+			f.write("</body></html>")
+
+			time.sleep(12)
+	except:
+		print("error location: allinone")
 
 
+apithread = threading.Thread(target=allinone)
 
-abfrage1 = User(accountid, fetchnigga, region)
-
-while True:
-	matchids = abfrage1.get_matchids()
-	del matchids[3:]
-	rresult, lane, championId_own, championname_own, kills, deaths, assists, cs = abfrage1.get_user_info(matchids[0], True)
-	championID_enemy, championname_enemy = abfrage1.get_enemyinfo(matchids[0], lane)
-
-	rresult1, championId_own1, championname_own1 = abfrage1.get_user_info(matchids[1], False)
-	championID_enemy1, championname_enemy1 = abfrage1.get_enemyinfo(matchids[1], lane)
-
-	rresult2, championId_own2, championname_own2 = abfrage1.get_user_info(matchids[2], False)
-	championID_enemy2, championname_enemy2 = abfrage1.get_enemyinfo(matchids[2], lane)
+def startthread():
+	global apikey
+	global accountid
+	if apikey != 'thisisnotavalidapikey' and accountid != 'thisisnotavalidapikey':
+		try:
+			apithread.start()
+		except:
+			print("error location: startthread")
 	
-	f = open('index.html', 'w')
-	f.write(html_upper)
-	f.write("""<table align="center"; style="width:100%">""")
-	f.write("<tr>" + "<td>" + """<img src="./ressources/pictures/champions/""" + str(championId_own) + """.png" style="width:16px;height:16px;">""" +  " vs " + """<img src="./ressources/pictures/champions/""" + str(championID_enemy) + """.png" style="width:16px;height:16px;">""" + "</td>" + "</tr>")
-	f.write("<tr>" + "<td>" + rresult + "   KDA:" + str(kills) + "/" + str(deaths) + "/" + str(assists) + "   " + "  CS:" + str(cs) + "</td>" + "</tr>")
+def stopthread():
+	try:
+		apithread.stop()
+	except:
+		print("error location: stopthread")
 
-	f.write("<tr>" + "<td>" + """<img src="./ressources/pictures/champions/""" + str(championId_own1) + """.png" style="width:16px;height:16px;">""" + " vs " + """<img src="./ressources/pictures/champions/""" + str(championID_enemy1) + """.png" style="width:16px;height:16px;">""" + "</td>" +  "</tr>")
-	f.write("<tr>" + "<td>" + rresult1 + "</td>" + "</tr>")
+app = QApplication(sys.argv)
+window = Fenster()
 
-	f.write("<tr>" + "<td>" + """<img src="./ressources/pictures/champions/""" + str(championId_own2) + """.png" style="width:16px;height:16px;">"""  + " vs " + """<img src="./ressources/pictures/champions/""" + str(championID_enemy2) + """.png" style="width:16px;height:16px;">""" + "</td>" + "</tr>")
-	f.write("<tr>" + "<td>" + rresult2 + "</td>" + "</tr>")
 
-	f.write("</table>")
+sys.exit(app.exec_())
 
-	f.write("</body></html>")
-
-	time.sleep(6)
