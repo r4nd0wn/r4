@@ -1,4 +1,4 @@
-===============
+
 <img src="https://raw.githubusercontent.com/r4nd0wn/r4/master/ressources/pictures/r4.svg?sanitize=true">
 ==================
 
