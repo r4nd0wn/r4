@@ -8,7 +8,8 @@ from PyQt5.QtCore import *
 import threading
 import logging
 
-
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtWebKitWidgets
 
 # ***HTML Skeleton***#
 html_upper = """
@@ -28,6 +29,31 @@ html_upper = """
 
 <body>
 """
+
+chat_upper = """
+<html>
+  <head>
+    <title></title>
+    <meta content="">
+    <style></style>
+  </head>
+  <body>
+  	<iframe frameborder="0"
+        scrolling="no"
+        id="chat_embed"
+        src="https://www.twitch.tv/embed/
+"""
+chat_lower = """
+/chat"
+        height="460"
+        width="300">
+	</iframe>
+
+  </body>
+</html>
+"""
+
+
 gids = []
 apikey = 'thisisnotavalidapikey'
 accountid = 'thisisnotavalidapikey'
@@ -36,6 +62,7 @@ matches = []
 ownchampion = []
 enemychampions = []
 alllanes = []
+username_twitch = 'r4nd0wn'
 
 
 with open('champion.json') as champion_file:
@@ -51,7 +78,7 @@ class Fenster(QWidget):
 
 
 		self.setGeometry(0,30,530,150)
-		self.setFixedSize(530, 150)
+		self.setFixedSize(530, 655)
 
 		self.setWindowTitle("r4 - created by r4nd0wn.")
 		self.setWindowIcon(QIcon("ressources/pictures/r4.svg"))
@@ -72,13 +99,29 @@ class Fenster(QWidget):
 		self.stopbutton.setGeometry(280, 110, 230, 23)
 		self.stopbutton.clicked.connect(stopthread)
 
+		self.twitchbutton = QPushButton("Set Channel", self)
+		self.twitchbutton.setGeometry(QtCore.QRect(400, 210, 110, 23))
+		self.twitchbutton.clicked.connect(self.twitchchat)
+
 		self.apiinsert = QLineEdit("Insert API Key here", self)
 		self.apiinsert.setGeometry(20, 20, 340, 23)
 
 		self.accinsert = QLineEdit('Insert AccountID here', self)
 		self.accinsert.setGeometry(20, 60, 340, 23)
 
+		self.channelinsert = QLineEdit('insert Channel', self)
+		self.channelinsert.setGeometry(QtCore.QRect(400, 170, 110, 23))
+
+		self.webView = QtWebKitWidgets.QWebView(self)
+		self.webView.setGeometry(QtCore.QRect(20, 170, 340, 460))
+		self.webView.setUrl(QtCore.QUrl("https://www.twitch.tv/popout/" + username_twitch + "/chat?darkpopout"))
+		self.webView.setObjectName("webView")
 		self.show()
+
+	def twitchchat(self):
+		global username_twitch
+		username_twitch = self.channelinsert.text()
+		self.webView.setUrl(QtCore.QUrl("https://www.twitch.tv/popout/" + username_twitch + "/chat?popout="))
 
 	def apichanged(self):
 		global apikey
@@ -245,4 +288,3 @@ window = Fenster()
 
 
 sys.exit(app.exec_())
-
