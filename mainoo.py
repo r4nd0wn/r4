@@ -107,9 +107,7 @@ class Fenster(QWidget):
 
 	def apichanged(self):
 		global apikey
-		print(apikey)
 		apikey = self.apiinsert.text()
-		print(apikey)
 
 	def accchanged(self):
 		global accountid
@@ -244,7 +242,8 @@ def allinone():
 			f.write("</body></html>")
 
 			time.sleep(12)
-	except:
+	except Exception as e:
+		print(e)
 		print("error location: allinone")
 
 
