@@ -157,7 +157,8 @@ class User:
 				championId_own = a['championId']
 				try:
 					championname_own = champions[str(championId_own)]
-				except:
+				except Exception as e:
+					print(e)
 					print("Der Champion mit der ID " + str(championId_own) + " ist leider nicht mehr verfügbar")
 
 				stats = a['stats']
@@ -204,7 +205,8 @@ class User:
 						championId_enemy = d['championId']
 						try:
 							championname_enemy = champions[str(championId_enemy)]
-						except:
+						except Exception as e:
+							print(e)
 							print("Der Champion mit der ID " + str(championId_enemy) + " ist leider nicht mehr verfügbar")
 		return championId_enemy, championname_enemy
 
@@ -255,13 +257,15 @@ def startthread():
 	if apikey != 'thisisnotavalidapikey' and accountid != 'thisisnotavalidapikey':
 		try:
 			apithread.start()
-		except:
+		except Exception as e:
+			print(e)
 			print("error location: startthread")
 	
 def stopthread():
 	try:
 		apithread.stop()
-	except:
+	except Exception as e:
+		print(e)
 		print("error location: stopthread")
 
 app = QApplication(sys.argv)
