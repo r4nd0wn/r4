@@ -53,15 +53,14 @@ chat_lower = """
 
 
 gids = []
-apikey = 'thisisnotavalidapikey'
-accountid = 'thisisnotavalidapikey'
+apikey = 'RGAPI-43a35a08-8b30-4a9c-b7c7-0612007c59e0'
+accountid = 'esyeZI7W2HbdAlIRf9lPvZ9h3pIdM1-BawqWI3TIUGleKDM'
 region = 'euw1'
 matches = []
 ownchampion = []
 enemychampions = []
 alllanes = []
 username_twitch = 'r4nd0wn'
-
 
 with open('champion.json') as champion_file:
 	champions = json.load(champion_file)
@@ -204,6 +203,7 @@ class User:
 						partIDenemy = d['participantId']
 						championId_enemy = d['championId']
 						try:
+							print(championId_enemy)
 							championname_enemy = champions[str(championId_enemy)]
 						except Exception as e:
 							print(e)
@@ -213,6 +213,8 @@ class User:
 def allinone():
 	try:
 		global apikey
+		global accountId
+		global accountid
 		fetchnigga = RiotWatcher(apikey)
 		abfrage1 = User(accountid, fetchnigga, region)
 		while True:
