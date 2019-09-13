@@ -1,7 +1,7 @@
 import json
 import time
-from PyQt5.QtCore import QTimer, QSettings
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtCore import QTimer, QSettings, Qt
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QPushButton
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 import requests
@@ -10,7 +10,7 @@ from irc import IRC
 import datetime
 import random
 import hashlib
-
+import os
 
 
 class Ui_MainWindow(QMainWindow):
@@ -19,10 +19,13 @@ class Ui_MainWindow(QMainWindow):
         super().__init__()
         self.setupUi(self)
 
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(640, 692)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
+    def setupUi(self, r4):
+        r4.setObjectName("r4")
+        r4.resize(640, 692)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/newPrefix/r4.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        r4.setWindowIcon(icon)
+        self.centralwidget = QtWidgets.QWidget(r4)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalWidget = QtWidgets.QWidget(self.centralwidget)
         self.horizontalWidget.setGeometry(QtCore.QRect(0, 0, 601, 631))
@@ -33,9 +36,10 @@ class Ui_MainWindow(QMainWindow):
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
-        self.PlainTextEdit = QtWidgets.QPlainTextEdit(self.horizontalWidget)
-        self.PlainTextEdit.setObjectName("PlainTextEdit")
-        self.verticalLayout.addWidget(self.PlainTextEdit)
+        self.plainTextEdit = QtWidgets.QPlainTextEdit(self.horizontalWidget)
+        self.plainTextEdit.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.plainTextEdit.setObjectName("plainTextEdit")
+        self.verticalLayout.addWidget(self.plainTextEdit)
         self.lineEdit = QtWidgets.QLineEdit(self.horizontalWidget)
         self.lineEdit.setObjectName("lineEdit")
         self.verticalLayout.addWidget(self.lineEdit)
@@ -47,40 +51,36 @@ class Ui_MainWindow(QMainWindow):
         self.horizontalLayout.addWidget(self.line)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
         self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.verticalLayout_3 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_3.setObjectName("verticalLayout_3")
+
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+
         self.label = QtWidgets.QLabel(self.horizontalWidget)
         self.label.setMaximumSize(QtCore.QSize(16777215, 25))
         self.label.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
-        self.verticalLayout_2.addWidget(self.label)
+        self.verticalLayout_3.addWidget(self.label)
         self.lcdNumber = QtWidgets.QLCDNumber(self.horizontalWidget)
         self.lcdNumber.setMinimumSize(QtCore.QSize(50, 0))
         self.lcdNumber.setMaximumSize(QtCore.QSize(16777215, 100))
-        self.lcdNumber.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.lcdNumber.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.lcdNumber.setFrameShadow(QtWidgets.QFrame.Plain)
+        self.lcdNumber.setLineWidth(0)
+        self.lcdNumber.setDigitCount(6)
         self.lcdNumber.setSegmentStyle(QtWidgets.QLCDNumber.Flat)
+        self.lcdNumber.setProperty("intValue", 1337)
         self.lcdNumber.setObjectName("lcdNumber")
-        self.verticalLayout_2.addWidget(self.lcdNumber)
-        self.lineEdit_3 = QtWidgets.QLineEdit(self.horizontalWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Maximum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lineEdit_3.sizePolicy().hasHeightForWidth())
-        self.lineEdit_3.setSizePolicy(sizePolicy)
-        self.lineEdit_3.setMinimumSize(QtCore.QSize(100, 25))
-        self.lineEdit_3.setMaximumSize(QtCore.QSize(200, 25))
-        self.lineEdit_3.setText("")
-        self.lineEdit_3.setObjectName("lineEdit_3")
-        self.verticalLayout_2.addWidget(self.lineEdit_3, 0, QtCore.Qt.AlignTop)
-        self.pushButton_3 = QtWidgets.QPushButton(self.horizontalWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Maximum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.pushButton_3.sizePolicy().hasHeightForWidth())
-        self.pushButton_3.setSizePolicy(sizePolicy)
-        self.pushButton_3.setMinimumSize(QtCore.QSize(100, 25))
-        self.pushButton_3.setMaximumSize(QtCore.QSize(200, 25))
-        self.pushButton_3.setObjectName("pushButton_3")
-        self.verticalLayout_2.addWidget(self.pushButton_3, 0, QtCore.Qt.AlignTop)
+        self.verticalLayout_3.addWidget(self.lcdNumber)
+        self.verticalLayout_2.addLayout(self.verticalLayout_3)
+        self.verticalLayout_4 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_4.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
+        self.verticalLayout_4.setContentsMargins(0, 0, -1, -1)
+        self.verticalLayout_4.setSpacing(0)
+        self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.pushButton_4 = QtWidgets.QPushButton(self.horizontalWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
@@ -90,7 +90,17 @@ class Ui_MainWindow(QMainWindow):
         self.pushButton_4.setMinimumSize(QtCore.QSize(100, 25))
         self.pushButton_4.setMaximumSize(QtCore.QSize(200, 25))
         self.pushButton_4.setObjectName("pushButton_4")
-        self.verticalLayout_2.addWidget(self.pushButton_4)
+        self.verticalLayout_4.addWidget(self.pushButton_4)
+        self.pushButton_3 = QtWidgets.QPushButton(self.horizontalWidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.pushButton_3.sizePolicy().hasHeightForWidth())
+        self.pushButton_3.setSizePolicy(sizePolicy)
+        self.pushButton_3.setMinimumSize(QtCore.QSize(100, 25))
+        self.pushButton_3.setMaximumSize(QtCore.QSize(200, 25))
+        self.pushButton_3.setObjectName("pushButton_3")
+        self.verticalLayout_4.addWidget(self.pushButton_3)
         self.pushButton_5 = QtWidgets.QPushButton(self.horizontalWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
@@ -100,84 +110,196 @@ class Ui_MainWindow(QMainWindow):
         self.pushButton_5.setMinimumSize(QtCore.QSize(100, 25))
         self.pushButton_5.setMaximumSize(QtCore.QSize(200, 25))
         self.pushButton_5.setObjectName("pushButton_5")
-        self.verticalLayout_2.addWidget(self.pushButton_5)
+        self.verticalLayout_4.addWidget(self.pushButton_5)
+        self.verticalLayout_2.addLayout(self.verticalLayout_4)
         self.horizontalLayout.addLayout(self.verticalLayout_2)
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        r4.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(r4)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 640, 30))
         self.menubar.setObjectName("menubar")
         self.menuSettings = QtWidgets.QMenu(self.menubar)
         self.menuSettings.setObjectName("menuSettings")
         self.menuInfo = QtWidgets.QMenu(self.menubar)
         self.menuInfo.setObjectName("menuInfo")
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        r4.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(r4)
         self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
-        self.actionSafe_Settings = QtWidgets.QAction(MainWindow)
-        self.actionSafe_Settings.setObjectName("actionSafe_Settings")
-        self.actionReload = QtWidgets.QAction(MainWindow)
+        r4.setStatusBar(self.statusbar)
+        self.actionSettings = QtWidgets.QAction(r4)
+        self.actionSettings.setObjectName("actionSettings")
+        self.actionSettings.triggered.connect(self.infodialog)
+        self.actionReload = QtWidgets.QAction(r4)
         self.actionReload.setObjectName("actionReload")
-        self.actionDeveloper_Info = QtWidgets.QAction(MainWindow)
+        self.actionDeveloper_Info = QtWidgets.QAction(r4)
         self.actionDeveloper_Info.setObjectName("actionDeveloper_Info")
-        self.actionApplication_Info = QtWidgets.QAction(MainWindow)
+        self.actionApplication_Info = QtWidgets.QAction(r4)
         self.actionApplication_Info.setObjectName("actionApplication_Info")
-        self.menuSettings.addAction(self.actionSafe_Settings)
+        self.menuSettings.addAction(self.actionSettings)
         self.menuSettings.addAction(self.actionReload)
         self.menuInfo.addAction(self.actionDeveloper_Info)
         self.menuInfo.addAction(self.actionApplication_Info)
         self.menubar.addAction(self.menuSettings.menuAction())
         self.menubar.addAction(self.menuInfo.menuAction())
         self.centralwidget.setLayout(self.horizontalLayout)
+        self.retranslateUi(r4)
+        QtCore.QMetaObject.connectSlotsByName(r4)
 
-
-
-        self.retranslateUi()
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
-
-    def retranslateUi(self):
+    def retranslateUi(self, r4):
         _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.label.setText(_translate("MainWindow", "Current Viewers"))
-        self.pushButton_3.setText(_translate("MainWindow", "PushButton"))
-        self.pushButton_4.setText(_translate("MainWindow", "PushButton"))
-        self.pushButton_5.setText(_translate("MainWindow", "PushButton"))
-        self.menuSettings.setTitle(_translate("MainWindow", "File"))
-        self.menuInfo.setTitle(_translate("MainWindow", "Info"))
-        self.actionSafe_Settings.setText(_translate("MainWindow", "Edit Settings"))
-        self.actionReload.setText(_translate("MainWindow", "Reload"))
-        self.actionDeveloper_Info.setText(_translate("MainWindow", "Developer Info"))
-        self.actionApplication_Info.setText(_translate("MainWindow", "Application Info"))
+        r4.setWindowTitle(_translate("r4", "r4\'s Streaming Suite"))
+        self.label.setText(_translate("r4", "Current Viewers"))
+        self.pushButton_4.setText(_translate("r4", "PushButton"))
+        self.pushButton_3.setText(_translate("r4", "PushButton"))
+        self.pushButton_5.setText(_translate("r4", "PushButton"))
+        self.menuSettings.setTitle(_translate("r4", "File"))
+        self.menuInfo.setTitle(_translate("r4", "Info"))
+        self.actionSettings.setText(_translate("r4", "Settings"))
+        self.actionReload.setText(_translate("r4", "Reload"))
+        self.actionDeveloper_Info.setText(_translate("r4", "Developer Info"))
+        self.actionApplication_Info.setText(_translate("r4", "Application Info"))
 
     def set_viewercount(self):
-        global viewername
-        self.lcdNumber.display(int(get_viewercount(get_clientId(viewername))))
+        global views
+        self.lcdNumber.display(int(views))
 
-    def set_chat(self):
-        global chat1
+    def infodialog(self):
+        d = Ui_Settings()
+        d.show()
+        d.exec_()
+        # os.execv(__file__, sys.argv)
+
+
+class Ui_Settings(QDialog):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+
+    def setupUi(self, Dialog):
+        Dialog.setObjectName("Settings")
+        Dialog.resize(314, 334)
+        self.verticalLayout_3 = QtWidgets.QVBoxLayout(Dialog)
+        self.verticalLayout_3.setObjectName("verticalLayout_3")
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_2.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.label_5 = QtWidgets.QLabel(Dialog)
+        self.label_5.setMaximumSize(QtCore.QSize(300, 25))
+        self.label_5.setObjectName("label_5")
+        self.verticalLayout_2.addWidget(self.label_5)
+        self.line = QtWidgets.QFrame(Dialog)
+        self.line.setMinimumSize(QtCore.QSize(300, 1))
+        self.line.setMaximumSize(QtCore.QSize(300, 1))
+        self.line.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line.setObjectName("line")
+        self.verticalLayout_2.addWidget(self.line)
+        self.label_2 = QtWidgets.QLabel(Dialog)
+        self.label_2.setMaximumSize(QtCore.QSize(300, 25))
+        self.label_2.setObjectName("label_2")
+        self.verticalLayout_2.addWidget(self.label_2)
+        self.lineEdit_2 = QtWidgets.QLineEdit(Dialog)
+        self.lineEdit_2.setMinimumSize(QtCore.QSize(200, 25))
+        self.lineEdit_2.setMaximumSize(QtCore.QSize(300, 25))
+        self.lineEdit_2.setObjectName("lineEdit_2")
+        self.verticalLayout_2.addWidget(self.lineEdit_2)
+        self.verticalLayout_3.addLayout(self.verticalLayout_2)
+        self.verticalLayout = QtWidgets.QVBoxLayout()
+        self.verticalLayout.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.label_6 = QtWidgets.QLabel(Dialog)
+        self.label_6.setObjectName("label_6")
+        self.verticalLayout.addWidget(self.label_6)
+        self.line_2 = QtWidgets.QFrame(Dialog)
+        self.line_2.setMaximumSize(QtCore.QSize(300, 1))
+        self.line_2.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_2.setObjectName("line_2")
+        self.verticalLayout.addWidget(self.line_2)
+        self.label = QtWidgets.QLabel(Dialog)
+        self.label.setMaximumSize(QtCore.QSize(200, 25))
+        self.label.setObjectName("label")
+        self.verticalLayout.addWidget(self.label)
+        self.lineEdit = QtWidgets.QLineEdit(Dialog)
+        self.lineEdit.setMinimumSize(QtCore.QSize(200, 25))
+        self.lineEdit.setMaximumSize(QtCore.QSize(300, 25))
+        self.lineEdit.setObjectName("lineEdit")
+        self.verticalLayout.addWidget(self.lineEdit)
+        self.label_3 = QtWidgets.QLabel(Dialog)
+        self.label_3.setObjectName("label_3")
+        self.verticalLayout.addWidget(self.label_3)
+        self.lineEdit_3 = QtWidgets.QLineEdit(Dialog)
+        self.lineEdit_3.setMinimumSize(QtCore.QSize(200, 25))
+        self.lineEdit_3.setMaximumSize(QtCore.QSize(300, 25))
+        self.lineEdit_3.setObjectName("lineEdit_3")
+        self.verticalLayout.addWidget(self.lineEdit_3)
+        self.label_4 = QtWidgets.QLabel(Dialog)
+        self.label_4.setObjectName("label_4")
+        self.verticalLayout.addWidget(self.label_4)
+        self.lineEdit_4 = QtWidgets.QLineEdit(Dialog)
+        self.lineEdit_4.setMaximumSize(QtCore.QSize(300, 25))
+        self.lineEdit_4.setObjectName("lineEdit_4")
+        self.verticalLayout.addWidget(self.lineEdit_4)
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem)
+        self.pushButton = QtWidgets.QPushButton(Dialog)
+        self.pushButton.setMinimumSize(QtCore.QSize(0, 25))
+        self.pushButton.setMaximumSize(QtCore.QSize(16777215, 25))
+        self.pushButton.setObjectName("pushButton")
+        self.pushButton.pressed.connect(self.writesettings)
+        self.horizontalLayout.addWidget(self.pushButton)
+        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.verticalLayout_3.addLayout(self.verticalLayout)
+
+        self.retranslateUi(Dialog)
+        QtCore.QMetaObject.connectSlotsByName(Dialog)
+
+    def retranslateUi(self, Dialog):
+        _translate = QtCore.QCoreApplication.translate
+        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        self.label_5.setText(_translate("Dialog", "<b>League of Legends Settings</b>"))
+        self.label_2.setText(_translate("Dialog", "Summoner Name"))
+        self.label_6.setText(_translate("Dialog", "<b>Twitch Settings</b>"))
+        self.label.setText(_translate("Dialog", "Username"))
+        self.label_3.setText(_translate("Dialog", "OAuth"))
+        self.label_4.setText(_translate("Dialog", "Channel"))
+        self.pushButton.setText(_translate("Dialog", "Save"))
+
+    def writesettings(self):
+        print()
+
+        settings.setValue("summonername", "DER Kax 59")
+        settings.setValue("username", self.lineEdit.text())
+        settings.setValue("oauth", self.lineEdit_3.text())
+        settings.setValue("channel", self.lineEdit_4.text())
+
+        self.close()
+        print(settings.value("channel", "dumb error"))
 
 
 app = QApplication(sys.argv)
 settings = QSettings("r4" "r4nd0wn")
-settings.setValue("username", "skadoodle")
-settings.
 window = Ui_MainWindow()
 window.show()
 print("xD")
 
-text_area = window.PlainTextEdit
+text_area = window.plainTextEdit
 
-username = "rTsFetcher"
-oauth = "oauth:efhn2jfl093dyrdv94rd91vad3zdoy"
-channel = "skadoodle"
+stanusername = "rTsFetcher"
+stanoauth = "oauth:efhn2jfl093dyrdv94rd91vad3zdoy"
+stanchannel = "derdickeelch"
 
-chat1 = IRC(channel, username, oauth)
+chat1 = IRC(settings.value("channel", stanchannel), settings.value("username", stanusername),
+            settings.value("oauth", stanoauth))
 chat1.connect()
 
 userlist = []
 colorid = []
 stimer = QTimer()
 new_messages = []
+
+
 def fetch_new_messages():
     while True:
         response = chat1.get_splitted_message()
@@ -186,8 +308,9 @@ def fetch_new_messages():
             new_messages.append(response)
 
 
-thread = Thread(target=fetch_new_messages, daemon=True)
-thread.start()
+messagethread = Thread(target=fetch_new_messages, daemon=True)
+messagethread.start()
+
 
 def display_new_messages():
     while new_messages:
@@ -195,13 +318,16 @@ def display_new_messages():
         prefix = """<b><span style="color: """ + getUserColor(message[1]) + """;">"""
         postfix = "</span></b>"
         print(message)
-        text_area.appendHtml("<small>" + message[0] + "</small>" + " " + prefix + message[1] + postfix + ": " + message[2])
+        text_area.appendHtml(
+            "<small>" + message[0] + "</small>" + " " + prefix + message[1] + postfix + ": " + message[2])
+
 
 def send_message():
     try:
         chat1.send(window.lineEdit.text())
         timestamp = datetime.datetime.now()
-        fullmessage = "<small>" + chat1.timestamp() + "</small>" + " " + """<b><span style="color: #00BFFF;">""" + username + "</span>" + ": " + "</b>" + window.lineEdit.text()
+        fullmessage = "<small>" + chat1.timestamp() + "</small>" + " " + """<b><span style="color: #00BFFF;">""" + settings.value(
+            "username", stanusername) + "</span>" + ": " + "</b>" + window.lineEdit.text()
 
         text_area.appendHtml(fullmessage)
         window.lineEdit.clear()
@@ -209,20 +335,13 @@ def send_message():
     except Exception as e:
         print(e)
 
+
 def getUserColor(usr):
     color = "#" + str(hashlib.sha512(usr.encode("UTF-8")).hexdigest())[0:6]
     return color
 
-def random_color():
-    color = "#" + ''.join([random.choice('0123456789ABCDEF') for j in range(6)])
-    return color
-
-def create_user(username):
-    userlist.append(username)
-    colorid.insert(userlist.index(username), random_color())
 
 def get_clientId(channelname):
-
     try:
         headers = {
             'Accept': 'application/vnd.twitchtv.v5+json',
@@ -242,9 +361,9 @@ def get_clientId(channelname):
         return id
     except Exception as e:
         print(e)
-def get_viewercount(id):
-    import requests
 
+
+def get_viewercount(id):
     headers = {
         'Accept': 'application/vnd.twitchtv.v5+json',
         'Client-ID': 'zc4jzl9wci2c16d2zir99z0jz7lxpw',
@@ -257,27 +376,26 @@ def get_viewercount(id):
     viewcount = stream.get("viewers", "")
     return viewcount
 
-def startviewercount():
-    try:
-        stimer.stop()
-    except:
-        print("timer already started")
-    global viewername
-    viewername = window.lineEdit_3.text()
-    window.lineEdit_3.clear()
-    window.set_viewercount()
 
-    stimer.timeout.connect(window.set_viewercount)
-    stimer.start(10000)
+def viewerthread():
+    global views
+    while True:
+        try:
+
+            views = get_viewercount(get_clientId(settings.value("channel", stanchannel)))
+            window.set_viewercount()
+            time.sleep(15)
+        except Exception as e:
+            print("error in other thread:")
+            print(e)
 
 
+viewerthread = Thread(target=viewerthread, daemon=True)
+viewerthread.start()
 window.lineEdit.returnPressed.connect(send_message)
 ftimer = QTimer()
 ftimer.timeout.connect(display_new_messages)
 ftimer.start(100)
-window.lineEdit_3.returnPressed.connect(startviewercount)
-
-
-
+stimer.start(10000)
 
 app.exec_()
