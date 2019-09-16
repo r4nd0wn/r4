@@ -11,13 +11,37 @@ import datetime
 import random
 import hashlib
 import os
+from riotwatcher import RiotWatcher, ApiError
 
+
+def startRiotwatcher():
+    if window.rtcheck.isChecked == True:
+
+        try:
+            threadname = Thread(target=riotwatcher, daemon=True)
+            riotthread.append(threadname)
+            threadname.start()
+
+        except Exception as e:
+            print(e)
+            print("faultinthreadstareter")
+
+    else:
+        print("Checkbox is not chekced")
+
+
+def startRiotwatcher():
+    threadname = Thread(target=riotwatcher, daemon=True)
+    riotthread.append(threadname)
+    threadname.start()
 
 class Ui_MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+
+
 
     def setupUi(self, r4):
         r4.setObjectName("r4")
@@ -64,6 +88,7 @@ class Ui_MainWindow(QMainWindow):
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
         self.verticalLayout_3.addWidget(self.label)
+
         self.lcdNumber = QtWidgets.QLCDNumber(self.horizontalWidget)
         self.lcdNumber.setMinimumSize(QtCore.QSize(50, 0))
         self.lcdNumber.setMaximumSize(QtCore.QSize(16777215, 100))
@@ -86,10 +111,16 @@ class Ui_MainWindow(QMainWindow):
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.pushButton_4.sizePolicy().hasHeightForWidth())
+        self.rtcheck = QtWidgets.QCheckBox(self.horizontalWidget)
+        self.rtcheck.setObjectName("checkBox")
+        self.verticalLayout_4.addWidget(self.rtcheck)
+        self.rtcheck.stateChanged.connect(startRiotwatcher)
         self.pushButton_4.setSizePolicy(sizePolicy)
         self.pushButton_4.setMinimumSize(QtCore.QSize(100, 25))
         self.pushButton_4.setMaximumSize(QtCore.QSize(200, 25))
         self.pushButton_4.setObjectName("pushButton_4")
+        #self.pushButton_4.pressed.connect(startRiotwatcher)
+        self.pushButton_4.clicked.connect(startRiotwatcher)
         self.verticalLayout_4.addWidget(self.pushButton_4)
         self.pushButton_3 = QtWidgets.QPushButton(self.horizontalWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Maximum)
@@ -148,15 +179,16 @@ class Ui_MainWindow(QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         r4.setWindowTitle(_translate("r4", "r4\'s Streaming Suite"))
         self.label.setText(_translate("r4", "Current Viewers"))
-        self.pushButton_4.setText(_translate("r4", "PushButton"))
-        self.pushButton_3.setText(_translate("r4", "PushButton"))
-        self.pushButton_5.setText(_translate("r4", "PushButton"))
+        self.pushButton_4.setText(_translate("r4", "riotwatchme"))
+        self.pushButton_3.setText(_translate("r4", "PushButton3"))
+        self.pushButton_5.setText(_translate("r4", "PushButton5"))
         self.menuSettings.setTitle(_translate("r4", "File"))
         self.menuInfo.setTitle(_translate("r4", "Info"))
         self.actionSettings.setText(_translate("r4", "Settings"))
         self.actionReload.setText(_translate("r4", "Reload"))
         self.actionDeveloper_Info.setText(_translate("r4", "Developer Info"))
         self.actionApplication_Info.setText(_translate("r4", "Application Info"))
+        self.rtcheck.setText(_translate("r4", "RiotWatcher"))
 
     def set_viewercount(self):
         global views
@@ -167,6 +199,7 @@ class Ui_MainWindow(QMainWindow):
         d.show()
         d.exec_()
         # os.execv(__file__, sys.argv)
+
 
 
 class Ui_Settings(QDialog):
@@ -267,15 +300,32 @@ class Ui_Settings(QDialog):
         self.pushButton.setText(_translate("Dialog", "Save"))
 
     def writesettings(self):
-        print()
+        setusern = self.lineEdit.text()
+        setoauth = self.lineEdit_3.text()
+        setchann = self.lineEdit_4.text()
+        print(setusern)
+        print(setoauth)
+        print(setchann)
+        if setusern == "":
+            text_area.appendPlainText("username is fucking empty")
+        else:
+            settings.setValue("username", self.lineEdit.text())
+        if setchann == "":
+            text_area.appendPlainText("channel is fucking empty")
+        else:
+            settings.setValue("oauth", self.lineEdit_3.text())
+        if setoauth == "":
+            text_area.appendPlainText("OAuth is fucking empty")
+        else:
+            settings.setValue("channel", self.lineEdit_4.text())
 
         settings.setValue("summonername", "DER Kax 59")
-        settings.setValue("username", self.lineEdit.text())
-        settings.setValue("oauth", self.lineEdit_3.text())
-        settings.setValue("channel", self.lineEdit_4.text())
+
+
 
         self.close()
         print(settings.value("channel", "dumb error"))
+
 
 
 app = QApplication(sys.argv)
@@ -288,7 +338,7 @@ text_area = window.plainTextEdit
 
 stanusername = "rTsFetcher"
 stanoauth = "oauth:efhn2jfl093dyrdv94rd91vad3zdoy"
-stanchannel = "derdickeelch"
+stanchannel = "r4f1xD"
 
 chat1 = IRC(settings.value("channel", stanchannel), settings.value("username", stanusername),
             settings.value("oauth", stanoauth))
@@ -298,6 +348,76 @@ userlist = []
 colorid = []
 stimer = QTimer()
 new_messages = []
+riotthread = []
+
+
+
+def riotwatcher():
+    try:
+        watcher = RiotWatcher('RGAPI-6afbce6a-761d-4116-b2f2-089a6b8f8798')
+        my_region = 'euw1'
+        summonername = "Der KAX 59"
+        me = watcher.summoner.by_name(my_region, 'Der KAX 59')
+        accountId = me.get("accountId")
+        id = me.get("id")
+        leagueinfoall = watcher.league.by_summoner(my_region, id)
+        leagueinfosoloduo = leagueinfoall[0]
+        leagueinfoflex = leagueinfoall[1]
+        leagueinfotft = leagueinfoall[2]
+        # print(type(leagueinfosoloduo))
+        mydivision = leagueinfosoloduo.get("tier")
+        myrank = leagueinfosoloduo.get("rank")
+        mylp = leagueinfosoloduo.get("leaguePoints")
+        mywinsthisseason = leagueinfosoloduo.get("wins")
+        mylosesthisseason = leagueinfosoloduo.get("losses")
+
+        matchlist = watcher.match.matchlist_by_account(my_region, accountId)
+        matches = matchlist.get("matches")
+        lastgame = matches[0]
+        gameidlastgame = lastgame.get("gameId")
+        mychamplastgame = lastgame.get("champion")
+        matchinfo = watcher.match.by_id(my_region, gameidlastgame)
+
+        participantIdentities = matchinfo.get("participantIdentities")
+        for i in participantIdentities:
+            player = i.get("player")
+            if summonername == player.get("summonerName"):
+                mypartid = i.get("participantId")
+        participants = matchinfo.get("participants")
+        myinfo = participants[mypartid - 1]
+        print(myinfo)
+        myteamidlastgame = myinfo.get("teamId")
+        print(myteamidlastgame)
+
+        teams = matchinfo.get("teams")
+        print(teams)
+        for j in teams:
+            if myteamidlastgame == j.get("teamId"):
+                winorloselastgame = j.get("win")
+        print(winorloselastgame)
+        Victory = "Victory"
+        Defeat = "Defeat"
+        if winorloselastgame == "Win":
+            winlastgame = 1
+        else:
+            winlastgame = 0
+        if winlastgame == 1:
+            print(Victory)
+        else:
+            print("Defeat")
+        mystatslastgame = myinfo.get("stats")
+        mykillslastgame = mystatslastgame.get("kills")
+        mydeathslastgame = mystatslastgame.get("deaths")
+        myassistslastgame = mystatslastgame.get("assists")
+        myvisionscorelastgame = mystatslastgame.get("visionScore")
+        minionskilledlastgame = (mystatslastgame.get("totalMinionsKilled")) + (mystatslastgame.get("neutralMinionsKilled"))
+        mylanelastgame = lastgame.get("lane")
+        for k in participants:
+            timeline = k.get("timeline")
+            if myteamidlastgame != k.get("teamId") and mylanelastgame == timeline.get("lane"):
+                mylaneenemy = k.get("participantId")
+    except Exception as e:
+        print(e)
 
 
 def fetch_new_messages():
@@ -326,7 +446,7 @@ def send_message():
     try:
         chat1.send(window.lineEdit.text())
         timestamp = datetime.datetime.now()
-        fullmessage = "<small>" + chat1.timestamp() + "</small>" + " " + """<b><span style="color: #00BFFF;">""" + settings.value(
+        fullmessage = "<small>" + chat1.timestamp() + "</small>" + " " + """<b><span style="color: """ + getUserColor(settings.value("username", stanusername)) + """;">""" + settings.value(
             "username", stanusername) + "</span>" + ": " + "</b>" + window.lineEdit.text()
 
         text_area.appendHtml(fullmessage)
@@ -337,7 +457,7 @@ def send_message():
 
 
 def getUserColor(usr):
-    color = "#" + str(hashlib.sha512(usr.encode("UTF-8")).hexdigest())[0:6]
+    color = "#" + str(hashlib.sha3_256(usr.encode("UTF-8")).hexdigest())[0:6]
     return color
 
 
@@ -390,6 +510,8 @@ def viewerthread():
             print(e)
 
 
+
+
 viewerthread = Thread(target=viewerthread, daemon=True)
 viewerthread.start()
 window.lineEdit.returnPressed.connect(send_message)
@@ -397,5 +519,9 @@ ftimer = QTimer()
 ftimer.timeout.connect(display_new_messages)
 ftimer.start(100)
 stimer.start(10000)
+
+rwTimer = QTimer()
+rwTimer.timeout.connect(startRiotwatcher)
+rwTimer.start(15000)
 
 app.exec_()
